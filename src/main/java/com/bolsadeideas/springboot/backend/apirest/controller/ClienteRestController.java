@@ -1,6 +1,5 @@
 package com.bolsadeideas.springboot.backend.apirest.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import com.bolsadeideas.springboot.backend.apirest.models.entities.Cliente;
