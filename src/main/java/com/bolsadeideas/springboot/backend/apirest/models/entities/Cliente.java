@@ -26,7 +26,7 @@ public class Cliente implements Serializable{
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
     private Date createAt;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @PrePersist
