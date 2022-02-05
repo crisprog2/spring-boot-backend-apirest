@@ -42,6 +42,14 @@ public class Cliente implements Serializable{
     @Column(nullable = false)
     private String email;
 
+    private String foto;
+
+    public String getFoto() {
+        return foto;
+    }
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
     public Long getId() {
         return id;
     }
