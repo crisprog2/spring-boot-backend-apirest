@@ -164,7 +164,7 @@ public class ClienteRestController {
         Cliente cliente=clienteService.findById(id);
         if (!archivo.isEmpty()) {
             String nombreArchivo = archivo.getOriginalFilename();
-            Path rutaArchivo =Paths.get("//src//main//resources//uploads").resolve(nombreArchivo).toAbsolutePath();
+            Path rutaArchivo =Paths.get("src//main//resources//uploads").resolve(nombreArchivo).toAbsolutePath();
             try {
                 Files.copy(archivo.getInputStream(), rutaArchivo);
             } catch (IOException e) {
