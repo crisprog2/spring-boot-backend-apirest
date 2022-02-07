@@ -1,5 +1,6 @@
 package com.bolsadeideas.springboot.backend.apirest.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -148,6 +149,15 @@ public class ClienteRestController {
     public ResponseEntity<?> update(@PathVariable Long id) {
         Map<String, Object> response=new HashMap<>();
         try {     
+            Cliente cliente=clienteService.findById(id);
+            String nombreFotoAnterior=cliente.getFoto();
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
+                Path rutaFotoAnterior =Paths.get("src//main//resources//uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                File archivoFotoAnterior = rutaFotoAnterior.toFile();
+                if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+                    archivoFotoAnterior.delete();
+                }
+            }
             clienteService.delete(id);     
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al eliminar el cliente en la base de datos");
@@ -173,6 +183,16 @@ public class ClienteRestController {
             response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            String nombreFotoAnterior=cliente.getFoto();
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
+                Path rutaFotoAnterior =Paths.get("src//main//resources//uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                File archivoFotoAnterior = rutaFotoAnterior.toFile();
+                if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+                    archivoFotoAnterior.delete();
+                }
+            }
+
             cliente.setFoto(nombreArchivo);
             clienteService.save(cliente);
             response.put("cliente", cliente);
