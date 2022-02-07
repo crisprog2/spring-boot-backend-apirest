@@ -152,7 +152,7 @@ public class ClienteRestController {
             Cliente cliente=clienteService.findById(id);
             String nombreFotoAnterior=cliente.getFoto();
             if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
-                Path rutaFotoAnterior =Paths.get("src//main//resources//uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                Path rutaFotoAnterior =Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
                 File archivoFotoAnterior = rutaFotoAnterior.toFile();
                 if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
                     archivoFotoAnterior.delete();
@@ -175,7 +175,7 @@ public class ClienteRestController {
         Cliente cliente=clienteService.findById(id);
         if (!archivo.isEmpty()) {
             String nombreArchivo = UUID.randomUUID().toString() +"_"+ archivo.getOriginalFilename().replace(" ", "");
-            Path rutaArchivo =Paths.get("src//main//resources//uploads").resolve(nombreArchivo).toAbsolutePath();
+            Path rutaArchivo =Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
             try {
                 Files.copy(archivo.getInputStream(), rutaArchivo);
             } catch (IOException e) {
@@ -186,7 +186,7 @@ public class ClienteRestController {
 
             String nombreFotoAnterior=cliente.getFoto();
             if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
-                Path rutaFotoAnterior =Paths.get("src//main//resources//uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+                Path rutaFotoAnterior =Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
                 File archivoFotoAnterior = rutaFotoAnterior.toFile();
                 if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
                     archivoFotoAnterior.delete();
