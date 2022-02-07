@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -163,7 +164,7 @@ public class ClienteRestController {
         Map<String, Object> response=new HashMap<>();
         Cliente cliente=clienteService.findById(id);
         if (!archivo.isEmpty()) {
-            String nombreArchivo = archivo.getOriginalFilename();
+            String nombreArchivo = UUID.randomUUID().toString() +"_"+ archivo.getOriginalFilename().replace(" ", "");
             Path rutaArchivo =Paths.get("src//main//resources//uploads").resolve(nombreArchivo).toAbsolutePath();
             try {
                 Files.copy(archivo.getInputStream(), rutaArchivo);
