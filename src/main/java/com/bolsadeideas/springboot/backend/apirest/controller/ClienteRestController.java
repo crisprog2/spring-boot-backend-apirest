@@ -42,33 +42,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api")
 public class ClienteRestController {
-    
+
     @Autowired
     private IClienteService clienteService;
 
-    private final Logger log= LoggerFactory.getLogger(ClienteRestController.class);
+    private final Logger log = LoggerFactory.getLogger(ClienteRestController.class);
 
     @GetMapping("/clientes")
-    public List<Cliente> index(){
+    public List<Cliente> index() {
         return clienteService.findAll();
     }
 
     @GetMapping("/clientes/page/{page}")
-    public Page<Cliente> index(@PathVariable Integer page){
-        Pageable pageable=PageRequest.of(page, 4);
+    public Page<Cliente> index(@PathVariable Integer page) {
+        Pageable pageable = PageRequest.of(page, 4);
         return clienteService.findAll(pageable);
     }
 
     @GetMapping("/clientes/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id){
+    public ResponseEntity<?> show(@PathVariable Long id) {
 
-        Cliente cliente=null;
-        Map<String, Object> response=new HashMap<>();
+        Cliente cliente = null;
+        Map<String, Object> response = new HashMap<>();
 
         try {
             cliente = clienteService.findById(id);
@@ -77,7 +76,7 @@ public class ClienteRestController {
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if(cliente==null){
+        if (cliente == null) {
             response.put("mensaje", "El cliente ID:".concat(id.toString().concat(" no existe en la base de datos!")));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
@@ -87,22 +86,22 @@ public class ClienteRestController {
     @PostMapping("/clientes")
     public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente, BindingResult result) {
 
-        Cliente clienteNew=null;
-        Map<String, Object> response=new HashMap<>();
+        Cliente clienteNew = null;
+        Map<String, Object> response = new HashMap<>();
 
         if (result.hasErrors()) {
-            List<String> errors=result.getFieldErrors()
-            .stream()
-            .map(err -> "El campo '"+err.getField()+"' "+err.getDefaultMessage())
-            .collect(Collectors.toList());
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+                    .collect(Collectors.toList());
             response.put("errors", errors);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
         try {
-            
-            clienteNew=clienteService.save(cliente);
-            
+
+            clienteNew = clienteService.save(cliente);
+
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al realizar la creacion en la base de datos");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -115,23 +114,24 @@ public class ClienteRestController {
 
     @PutMapping("/clientes/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id) {
-        Cliente clienteActual =  clienteService.findById(id);
+        Cliente clienteActual = clienteService.findById(id);
 
-        Cliente clienteUpdated=null;
+        Cliente clienteUpdated = null;
 
-        Map<String, Object> response=new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
         if (result.hasErrors()) {
-            List<String> errors=result.getFieldErrors()
-            .stream()
-            .map(err -> "El campo '"+err.getField()+"' "+err.getDefaultMessage())
-            .collect(Collectors.toList());
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
+                    .collect(Collectors.toList());
             response.put("errors", errors);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
         }
 
-        if(clienteActual==null){
-            response.put("mensaje", "Error:  no se pudoe editar, el cliente ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+        if (clienteActual == null) {
+            response.put("mensaje", "Error:  no se pudoe editar, el cliente ID: "
+                    .concat(id.toString().concat(" no existe en la base de datos!")));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
         }
 
@@ -140,7 +140,7 @@ public class ClienteRestController {
             clienteActual.setApellido(cliente.getApellido());
             clienteActual.setEmail(cliente.getEmail());
             clienteActual.setCreateAt(cliente.getCreateAt());
-            clienteUpdated=clienteService.save(clienteActual);          
+            clienteUpdated = clienteService.save(clienteActual);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al actualizar el cliente en la base de datos");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -155,18 +155,18 @@ public class ClienteRestController {
 
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<?> update(@PathVariable Long id) {
-        Map<String, Object> response=new HashMap<>();
-        try {     
-            Cliente cliente=clienteService.findById(id);
-            String nombreFotoAnterior=cliente.getFoto();
-            if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
-                Path rutaFotoAnterior =Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Cliente cliente = clienteService.findById(id);
+            String nombreFotoAnterior = cliente.getFoto();
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0) {
+                Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
                 File archivoFotoAnterior = rutaFotoAnterior.toFile();
                 if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
                     archivoFotoAnterior.delete();
                 }
             }
-            clienteService.delete(id);     
+            clienteService.delete(id);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al eliminar el cliente en la base de datos");
             response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -174,28 +174,28 @@ public class ClienteRestController {
         }
         response.put("mensaje", "El cliente ha sido eliminado con exito");
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-        
+
     }
 
     @PostMapping("/clientes/upload")
-    public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
-        Map<String, Object> response=new HashMap<>();
-        Cliente cliente=clienteService.findById(id);
+    public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Cliente cliente = clienteService.findById(id);
         if (!archivo.isEmpty()) {
-            String nombreArchivo = UUID.randomUUID().toString() +"_"+ archivo.getOriginalFilename().replace(" ", "");
-            Path rutaArchivo =Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
+            String nombreArchivo = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename().replace(" ", "");
+            Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
             log.info(rutaArchivo.toString());
             try {
                 Files.copy(archivo.getInputStream(), rutaArchivo);
             } catch (IOException e) {
-                response.put("mensaje", "Error al subir la imagen "+nombreArchivo);
-            response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
+                response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
+                response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            String nombreFotoAnterior=cliente.getFoto();
-            if (nombreFotoAnterior != null && nombreFotoAnterior.length()>0) {
-                Path rutaFotoAnterior =Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
+            String nombreFotoAnterior = cliente.getFoto();
+            if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0) {
+                Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
                 File archivoFotoAnterior = rutaFotoAnterior.toFile();
                 if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
                     archivoFotoAnterior.delete();
@@ -205,26 +205,26 @@ public class ClienteRestController {
             cliente.setFoto(nombreArchivo);
             clienteService.save(cliente);
             response.put("cliente", cliente);
-            response.put("mensaje", "Has cargado la imagen con exito "+nombreArchivo);
+            response.put("mensaje", "Has cargado la imagen con exito " + nombreArchivo);
         }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/uploads/img/{nombreFoto:.+}")
-    public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
-        Path rutaArchivo =Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
+    public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
+        Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
         log.info(rutaArchivo.toString());
-        Resource recurso=null;
+        Resource recurso = null;
         try {
-            recurso=new UrlResource(rutaArchivo.toUri());
+            recurso = new UrlResource(rutaArchivo.toUri());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         if (!recurso.exists() && !recurso.isReadable()) {
-            throw new RuntimeException("Error no se pudo cargar la imagen: "+nombreFoto);
+            throw new RuntimeException("Error no se pudo cargar la imagen: " + nombreFoto);
         }
-        HttpHeaders cabecera=new HttpHeaders();
-        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+recurso.getFilename()+"\"");
+        HttpHeaders cabecera = new HttpHeaders();
+        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
         return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
     }
 
