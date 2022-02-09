@@ -49,6 +49,7 @@ public class Cliente implements Serializable {
 
     private String foto;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
