@@ -3,9 +3,11 @@ package com.bolsadeideas.springboot.backend.apirest.models.entities;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,9 +18,11 @@ public class ItemFactura implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer cantidad;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Producto producto;
 
-    public Double calcularImporte(){
-        return cantidad.doubleValue();
+    public Double getImporte(){
+        return cantidad.doubleValue()*producto.getPrecio();
     }
 
     public Long getId() {
@@ -33,5 +37,12 @@ public class ItemFactura implements Serializable{
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
+    public Producto getProducto() {
+        return producto;
+    }
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+    
     
 }
