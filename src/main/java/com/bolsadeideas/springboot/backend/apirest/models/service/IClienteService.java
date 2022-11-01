@@ -3,6 +3,7 @@ package com.bolsadeideas.springboot.backend.apirest.models.service;
 import java.util.List;
 
 import com.bolsadeideas.springboot.backend.apirest.models.entities.Cliente;
+import com.bolsadeideas.springboot.backend.apirest.models.entities.Factura;
 import com.bolsadeideas.springboot.backend.apirest.models.entities.Region;
 
 import org.springframework.data.domain.Page;
@@ -15,4 +16,7 @@ public interface IClienteService {
     public Cliente save(Cliente cliente);
     public void delete(Long id);
     public List<Region> findAllRegiones();
+    public Factura findFacturaById(Long id);
+    public Factura saveFactura(Factura factura);
+    public void deleteFacturaById(Long id);
 }
